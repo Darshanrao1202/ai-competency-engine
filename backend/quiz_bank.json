@@ -1,0 +1,652 @@
+[
+  {
+    "question_id": "py_1",
+    "competency_id": 1,
+    "question_text": "Which NumPy method is used to change the shape of an array without changing its underlying data?",
+    "options": [
+      "np.reshape()",
+      "np.flatten()",
+      "np.transpose()",
+      "np.resize()"
+    ],
+    "correct_answer": "np.reshape()",
+    "difficulty": 1
+  },
+  {
+    "question_id": "py_2",
+    "competency_id": 1,
+    "question_text": "In Pandas, how do you handle missing values by replacing them with the column mean?",
+    "options": [
+      "df.dropna(axis=0)",
+      "df.fillna(df.mean())",
+      "df.replace(np.nan, 0)",
+      "df.interpolate(method='linear')"
+    ],
+    "correct_answer": "df.fillna(df.mean())",
+    "difficulty": 2
+  },
+  {
+    "question_id": "py_3",
+    "competency_id": 1,
+    "question_text": "What is the primary benefit of using a Scikit-Learn Pipeline when preprocessing data and training models?",
+    "options": [
+      "It runs computations on the GPU automatically.",
+      "It prevents data leakage between training and validation splits during cross-validation.",
+      "It automatically optimizes hyperparameters using Bayesian search.",
+      "It compresses feature arrays to reduce memory footprint by 50%."
+    ],
+    "correct_answer": "It prevents data leakage between training and validation splits during cross-validation.",
+    "difficulty": 3
+  },
+  {
+    "question_id": "py_4",
+    "competency_id": 1,
+    "question_text": "When vectorizing text using TF-IDF in Scikit-Learn, which parameter controls the ignore threshold for terms appearing in more than a given percentage of documents?",
+    "options": [
+      "min_df",
+      "max_df",
+      "sublinear_tf",
+      "norm"
+    ],
+    "correct_answer": "max_df",
+    "difficulty": 4
+  },
+  {
+    "question_id": "py_5",
+    "competency_id": 1,
+    "question_text": "In high-dimensional feature spaces, how does NumPy's memory striding affect matrix multiplication cache efficiency compared to Fortran-contiguous arrays?",
+    "options": [
+      "C-contiguous arrays maximize row-major cache locality during standard dot products.",
+      "Fortran-contiguous ordering eliminates cache misses for all tensor operations.",
+      "Strided views bypass L1/L2 CPU caches entirely using DMA transfers.",
+      "Array order has zero impact on modern BLAS libraries like OpenBLAS or MKL."
+    ],
+    "correct_answer": "C-contiguous arrays maximize row-major cache locality during standard dot products.",
+    "difficulty": 5
+  },
+  {
+    "question_id": "dsa_1",
+    "competency_id": 2,
+    "question_text": "What is the worst-case time complexity of searching for an element in an unsorted array of size N?",
+    "options": [
+      "O(1)",
+      "O(log N)",
+      "O(N)",
+      "O(N log N)"
+    ],
+    "correct_answer": "O(N)",
+    "difficulty": 1
+  },
+  {
+    "question_id": "dsa_2",
+    "competency_id": 2,
+    "question_text": "Which data structure operates on a First-In-First-Out (FIFO) principle and is commonly used in Breadth-First Search (BFS)?",
+    "options": [
+      "Stack",
+      "Queue",
+      "Priority Queue",
+      "Binary Search Tree"
+    ],
+    "correct_answer": "Queue",
+    "difficulty": 2
+  },
+  {
+    "question_id": "dsa_3",
+    "competency_id": 2,
+    "question_text": "What is the average and worst-case time complexity of Quicksort when using a randomized pivot?",
+    "options": [
+      "Average: O(N log N), Worst: O(N^2)",
+      "Average: O(N), Worst: O(N log N)",
+      "Average: O(N log N), Worst: O(N log N)",
+      "Average: O(log N), Worst: O(N)"
+    ],
+    "correct_answer": "Average: O(N log N), Worst: O(N^2)",
+    "difficulty": 3
+  },
+  {
+    "question_id": "dsa_4",
+    "competency_id": 2,
+    "question_text": "Which algorithm finds the single-source shortest path in a weighted directed graph with non-negative edge weights in O((V + E) log V) time?",
+    "options": [
+      "Bellman-Ford",
+      "Floyd-Warshall",
+      "Dijkstra with Min-Heap",
+      "Kruskal's Algorithm"
+    ],
+    "correct_answer": "Dijkstra with Min-Heap",
+    "difficulty": 4
+  },
+  {
+    "question_id": "dsa_5",
+    "competency_id": 2,
+    "question_text": "In an Aho-Corasick automaton or Trie-based dictionary matching, what is the amortized time complexity to search for all occurrences of K dictionary patterns in a text string of length M?",
+    "options": [
+      "O(M * K)",
+      "O(M + Z) where Z is total matches",
+      "O(M^2 log K)",
+      "O(K * log M)"
+    ],
+    "correct_answer": "O(M + Z) where Z is total matches",
+    "difficulty": 5
+  },
+  {
+    "question_id": "sql_1",
+    "competency_id": 3,
+    "question_text": "Which Oracle SQL clause is used to filter records resulting from an aggregate function like COUNT() or AVG()?",
+    "options": [
+      "WHERE",
+      "HAVING",
+      "GROUP BY",
+      "ORDER BY"
+    ],
+    "correct_answer": "HAVING",
+    "difficulty": 1
+  },
+  {
+    "question_id": "sql_2",
+    "competency_id": 3,
+    "question_text": "In Oracle SQL, which pseudo-column returns a unique sequential number for rows fetched from a query result set?",
+    "options": [
+      "ROWID",
+      "ROWNUM",
+      "SEQUENCE_NO",
+      "LEVEL"
+    ],
+    "correct_answer": "ROWNUM",
+    "difficulty": 2
+  },
+  {
+    "question_id": "sql_3",
+    "competency_id": 3,
+    "question_text": "What is the primary difference between a FUNCTION and a PROCEDURE in Oracle PL/SQL?",
+    "options": [
+      "A FUNCTION must return a value using a RETURN statement, while a PROCEDURE does not need to return a value.",
+      "A PROCEDURE can only be called from inside SQL SELECT statements.",
+      "A FUNCTION cannot have IN or OUT parameters.",
+      "A PROCEDURE executes with autonomous transaction privileges by default."
+    ],
+    "correct_answer": "A FUNCTION must return a value using a RETURN statement, while a PROCEDURE does not need to return a value.",
+    "difficulty": 3
+  },
+  {
+    "question_id": "sql_4",
+    "competency_id": 3,
+    "question_text": "In Oracle PL/SQL triggers, what keyword allows access to the proposed new column values during an UPDATE or INSERT operation?",
+    "options": [
+      ":OLD",
+      ":NEW",
+      ":CURRENT",
+      ":UPDATED"
+    ],
+    "correct_answer": ":NEW",
+    "difficulty": 4
+  },
+  {
+    "question_id": "sql_5",
+    "competency_id": 3,
+    "question_text": "What Oracle PL/SQL pragma enables a subprogram to execute independently of the main calling transaction without committing or rolling back the parent?",
+    "options": [
+      "PRAGMA AUTONOMOUS_TRANSACTION",
+      "PRAGMA SERIALLY_REUSABLE",
+      "PRAGMA RESTRICT_REFERENCES",
+      "PRAGMA EXCEPTION_INIT"
+    ],
+    "correct_answer": "PRAGMA AUTONOMOUS_TRANSACTION",
+    "difficulty": 5
+  },
+  {
+    "question_id": "dl_1",
+    "competency_id": 4,
+    "question_text": "Which activation function is most widely used in hidden layers of deep neural networks to mitigate the vanishing gradient problem while maintaining computational simplicity?",
+    "options": [
+      "Sigmoid",
+      "Tanh",
+      "ReLU (Rectified Linear Unit)",
+      "Softmax"
+    ],
+    "correct_answer": "ReLU (Rectified Linear Unit)",
+    "difficulty": 1
+  },
+  {
+    "question_id": "dl_2",
+    "competency_id": 4,
+    "question_text": "What regularization technique randomly sets a fraction of input units to 0 at each update during training time to prevent overfitting?",
+    "options": [
+      "Batch Normalization",
+      "Dropout",
+      "L2 Weight Decay",
+      "Early Stopping"
+    ],
+    "correct_answer": "Dropout",
+    "difficulty": 2
+  },
+  {
+    "question_id": "dl_3",
+    "competency_id": 4,
+    "question_text": "Why do Residual Networks (ResNets) successfully train networks with hundreds of layers compared to plain deep feedforward networks?",
+    "options": [
+      "They replace matrix multiplications with Fast Fourier Transforms.",
+      "Skip connections allow identity gradients to flow unimpeded directly through residual blocks.",
+      "They double the channel depth at every single layer.",
+      "They use zero learning rate warmups and pure stochastic gradient descent."
+    ],
+    "correct_answer": "Skip connections allow identity gradients to flow unimpeded directly through residual blocks.",
+    "difficulty": 3
+  },
+  {
+    "question_id": "dl_4",
+    "competency_id": 4,
+    "question_text": "In the Transformer architecture, what is the computational complexity of the Scaled Dot-Product Attention mechanism with respect to sequence length N and embedding dimension D?",
+    "options": [
+      "O(N * D)",
+      "O(N^2 * D)",
+      "O(N * D^2)",
+      "O(N^3)"
+    ],
+    "correct_answer": "O(N^2 * D)",
+    "difficulty": 4
+  },
+  {
+    "question_id": "dl_5",
+    "competency_id": 4,
+    "question_text": "In distributed LLM training, how does FlashAttention-2 achieve a 2-4x wall-clock speedup over standard multi-head attention?",
+    "options": [
+      "By quantizing attention weights to 4-bit integers.",
+      "By tiling softmax computation in SRAM, eliminating roundtrips to high-bandwidth GPU memory (HBM).",
+      "By replacing softmax with top-K sparse linear projections.",
+      "By computing cross-entropy loss asynchronously on the CPU."
+    ],
+    "correct_answer": "By tiling softmax computation in SRAM, eliminating roundtrips to high-bandwidth GPU memory (HBM).",
+    "difficulty": 5
+  },
+  {
+    "question_id": "nlp_1",
+    "competency_id": 5,
+    "question_text": "What is the process of reducing inflected words to their root or dictionary form called?",
+    "options": [
+      "Tokenization",
+      "Lemmatization",
+      "Vectorization",
+      "Stemming"
+    ],
+    "correct_answer": "Lemmatization",
+    "difficulty": 1
+  },
+  {
+    "question_id": "nlp_2",
+    "competency_id": 5,
+    "question_text": "What is the core difference between Word2Vec (Skip-gram/CBOW) and TF-IDF representations?",
+    "options": [
+      "Word2Vec produces dense semantic vector representations, whereas TF-IDF produces sparse vocabulary vectors.",
+      "TF-IDF preserves syntactic word ordering while Word2Vec treats text as bag-of-words.",
+      "Word2Vec cannot be trained on unlabelled text corpora.",
+      "TF-IDF operates only on character n-grams."
+    ],
+    "correct_answer": "Word2Vec produces dense semantic vector representations, whereas TF-IDF produces sparse vocabulary vectors.",
+    "difficulty": 2
+  },
+  {
+    "question_id": "nlp_3",
+    "competency_id": 5,
+    "question_text": "Which tokenization algorithm is utilized by BERT and GPT models to decompose out-of-vocabulary words into frequent subword units?",
+    "options": [
+      "Byte Pair Encoding (BPE) / WordPiece",
+      "Whitespace Tokenizer",
+      "Penn Treebank Tokenizer",
+      "Soundex Hashing"
+    ],
+    "correct_answer": "Byte Pair Encoding (BPE) / WordPiece",
+    "difficulty": 3
+  },
+  {
+    "question_id": "nlp_4",
+    "competency_id": 5,
+    "question_text": "In encoder-decoder translation models, how does Rotary Position Embedding (RoPE) encode token distance into query and key representations?",
+    "options": [
+      "By adding learned 1D vectors to token embeddings.",
+      "By applying a rotation matrix with frequency-dependent angles directly to 2D feature chunks of queries and keys.",
+      "By computing hyperbolic distances in Poincar\u00e9 ball space.",
+      "By clipping absolute positions to a maximum window of 512 tokens."
+    ],
+    "correct_answer": "By applying a rotation matrix with frequency-dependent angles directly to 2D feature chunks of queries and keys.",
+    "difficulty": 4
+  },
+  {
+    "question_id": "nlp_5",
+    "competency_id": 5,
+    "question_text": "In Low-Rank Adaptation (LoRA) for fine-tuning LLMs, how is a frozen weight matrix W_0 in R^(d x k) parameterized with rank r?",
+    "options": [
+      "W = W_0 + B * A, where B in R^(d x r) and A in R^(r x k) with r << min(d, k)",
+      "W = W_0 * (A + B)^(-1) using SVD decomposition",
+      "W = W_0 + diag(lambda_1, ..., lambda_r)",
+      "W = softmax(W_0) + randn(d, k)"
+    ],
+    "correct_answer": "W = W_0 + B * A, where B in R^(d x r) and A in R^(r x k) with r << min(d, k)",
+    "difficulty": 5
+  },
+  {
+    "question_id": "mlops_1",
+    "competency_id": 6,
+    "question_text": "Which tool in the MLOps ecosystem is primarily used for tracking parameters, metrics, code versions, and artifacts during ML experiment runs?",
+    "options": [
+      "Kubernetes",
+      "MLflow",
+      "Terraform",
+      "Ansible"
+    ],
+    "correct_answer": "MLflow",
+    "difficulty": 1
+  },
+  {
+    "question_id": "mlops_2",
+    "competency_id": 6,
+    "question_text": "What type of distribution shift occurs when the relationship between input features X and target variable Y changes over time (P(Y|X) changes)?",
+    "options": [
+      "Covariate Shift",
+      "Concept Drift",
+      "Prior Probability Shift",
+      "Data Leakage"
+    ],
+    "correct_answer": "Concept Drift",
+    "difficulty": 2
+  },
+  {
+    "question_id": "mlops_3",
+    "competency_id": 6,
+    "question_text": "In production ML serving, what deployment strategy routes a small percentage (e.g. 5%) of live production traffic to a newly deployed model to observe real-world performance before full rollout?",
+    "options": [
+      "Shadow Deployment",
+      "Canary Deployment",
+      "Blue-Green Deployment",
+      "A/B Testing with holdout"
+    ],
+    "correct_answer": "Canary Deployment",
+    "difficulty": 3
+  },
+  {
+    "question_id": "mlops_4",
+    "competency_id": 6,
+    "question_text": "What is the primary role of an Enterprise Feature Store (like Feast or Hopsworks) in an MLOps architecture?",
+    "options": [
+      "To convert text prompts into images for vision models.",
+      "To guarantee point-in-time correctness for offline training and ultra-low-latency feature lookups for online inference.",
+      "To compile PyTorch models directly into FPGA hardware bitstreams.",
+      "To manage GitHub pull requests for data engineering teams."
+    ],
+    "correct_answer": "To guarantee point-in-time correctness for offline training and ultra-low-latency feature lookups for online inference.",
+    "difficulty": 4
+  },
+  {
+    "question_id": "mlops_5",
+    "competency_id": 6,
+    "question_text": "When serving LLMs with vLLM, how does PagedAttention eliminate KV cache memory fragmentation?",
+    "options": [
+      "By quantizing all attention heads to 1-bit binary weights.",
+      "By managing KV cache in non-contiguous physical memory blocks analogous to OS virtual memory paging.",
+      "By evicting old tokens strictly based on LRU cache policies.",
+      "By offloading all KV states to network NFS storage."
+    ],
+    "correct_answer": "By managing KV cache in non-contiguous physical memory blocks analogous to OS virtual memory paging.",
+    "difficulty": 5
+  },
+  {
+    "question_id": "sys_1",
+    "competency_id": 7,
+    "question_text": "Which caching pattern writes data to both the cache and the primary database store simultaneously before returning success to the client?",
+    "options": [
+      "Cache-Aside",
+      "Write-Through",
+      "Write-Back (Write-Behind)",
+      "Refresh-Ahead"
+    ],
+    "correct_answer": "Write-Through",
+    "difficulty": 1
+  },
+  {
+    "question_id": "sys_2",
+    "competency_id": 7,
+    "question_text": "According to the CAP theorem, which property must a distributed system sacrifice when a network partition (P) occurs if it guarantees immediate Consistency (C)?",
+    "options": [
+      "Durability",
+      "Availability",
+      "Atomicity",
+      "Isolation"
+    ],
+    "correct_answer": "Availability",
+    "difficulty": 2
+  },
+  {
+    "question_id": "sys_3",
+    "competency_id": 7,
+    "question_text": "How does Consistent Hashing minimize data movement when a cache node is added or removed from a distributed cluster?",
+    "options": [
+      "By mapping both nodes and keys onto a virtual circular hash ring, remapping only keys residing between adjacent nodes.",
+      "By replicating every key across all available servers.",
+      "By executing a distributed two-phase commit across all partitions.",
+      "By using modulo arithmetic (hash(key) % N) on the total server count N."
+    ],
+    "correct_answer": "By mapping both nodes and keys onto a virtual circular hash ring, remapping only keys residing between adjacent nodes.",
+    "difficulty": 3
+  },
+  {
+    "question_id": "sys_4",
+    "competency_id": 7,
+    "question_text": "What distributed coordination mechanism does Raft consensus use to ensure state machine replication across a cluster?",
+    "options": [
+      "Leader election via randomized election timers followed by log entry append and quorum commitment.",
+      "Gossip protocol with vector clocks.",
+      "Asynchronous Paxos with multi-round ballot voting.",
+      "Two-phase locking with global deadlock detection."
+    ],
+    "correct_answer": "Leader election via randomized election timers followed by log entry append and quorum commitment.",
+    "difficulty": 4
+  },
+  {
+    "question_id": "sys_5",
+    "competency_id": 7,
+    "question_text": "In a distributed event-driven system with high write throughput, how does an LSM-tree (Log-Structured Merge-tree) optimize write amplification and random read latency compared to a B+ Tree?",
+    "options": [
+      "Appends writes sequentially to an in-memory MemTable and commit log, flushing to immutable SSTables periodically compacted in tiers.",
+      "Performs in-place updates on SSD block sectors with write-ahead locks.",
+      "Bypasses disk storage completely using non-volatile RAM.",
+      "Compresses write requests into single-byte bitmaps."
+    ],
+    "correct_answer": "Appends writes sequentially to an in-memory MemTable and commit log, flushing to immutable SSTables periodically compacted in tiers.",
+    "difficulty": 5
+  },
+  {
+    "question_id": "cld_1",
+    "competency_id": 8,
+    "question_text": "What Dockerfile instruction specifies the default executable and arguments that run when a container starts?",
+    "options": [
+      "RUN",
+      "ENTRYPOINT / CMD",
+      "EXPOSE",
+      "WORKDIR"
+    ],
+    "correct_answer": "ENTRYPOINT / CMD",
+    "difficulty": 1
+  },
+  {
+    "question_id": "cld_2",
+    "competency_id": 8,
+    "question_text": "In Kubernetes, which resource object provides a single stable IP address and DNS name to route network traffic to a dynamic set of Pods?",
+    "options": [
+      "ConfigMap",
+      "Service",
+      "DaemonSet",
+      "Namespace"
+    ],
+    "correct_answer": "Service",
+    "difficulty": 2
+  },
+  {
+    "question_id": "cld_3",
+    "competency_id": 8,
+    "question_text": "What is the primary architectural purpose of a Kubernetes Ingress Controller (e.g. NGINX Ingress or Traefik)?",
+    "options": [
+      "To manage HTTP/HTTPS routing, SSL/TLS termination, and path-based routing into cluster services from external traffic.",
+      "To automatically provision virtual machine instances in public clouds.",
+      "To store persistent volume claims on raw block devices.",
+      "To execute scheduled cron jobs across worker nodes."
+    ],
+    "correct_answer": "To manage HTTP/HTTPS routing, SSL/TLS termination, and path-based routing into cluster services from external traffic.",
+    "difficulty": 3
+  },
+  {
+    "question_id": "cld_4",
+    "competency_id": 8,
+    "question_text": "In Terraform Infrastructure-as-Code (IaC), what is the function of the state file (terraform.tfstate)?",
+    "options": [
+      "It holds the compiled binary of the target application.",
+      "It maps real-world cloud resources to your configuration and tracks resource metadata and dependencies.",
+      "It stores user passwords and SSH keys in plaintext.",
+      "It defines the syntax rules for HashiCorp Configuration Language."
+    ],
+    "correct_answer": "It maps real-world cloud resources to your configuration and tracks resource metadata and dependencies.",
+    "difficulty": 4
+  },
+  {
+    "question_id": "cld_5",
+    "competency_id": 8,
+    "question_text": "In multi-region Kubernetes deployments, how does a Service Mesh (e.g. Istio with Envoy) implement zero-trust mutual TLS (mTLS) between microservices?",
+    "options": [
+      "By having sidecar proxies automatically intercept traffic, authenticate SPIFFE identities via X.509 certificates, and encrypt payload in transit.",
+      "By setting iptables rules to block all UDP packets.",
+      "By encrypting the underlying Linux ext4 filesystem on host nodes.",
+      "By requiring developers to write OpenSSL encryption routines inside each microservice."
+    ],
+    "correct_answer": "By having sidecar proxies automatically intercept traffic, authenticate SPIFFE identities via X.509 certificates, and encrypt payload in transit.",
+    "difficulty": 5
+  },
+  {
+    "question_id": "web_1",
+    "competency_id": 9,
+    "question_text": "In RESTful API design, which HTTP method is considered idempotent and used to completely replace an existing resource representation?",
+    "options": [
+      "POST",
+      "PUT",
+      "PATCH",
+      "CONNECT"
+    ],
+    "correct_answer": "PUT",
+    "difficulty": 1
+  },
+  {
+    "question_id": "web_2",
+    "competency_id": 9,
+    "question_text": "In Next.js App Router (version 13+), what is the default rendering behavior for components placed inside the `app` directory unless explicitly specified otherwise?",
+    "options": [
+      "React Client Components ('use client')",
+      "React Server Components (RSC)",
+      "Static HTML exports only",
+      "Single Page Application (SPA) client-side bundle"
+    ],
+    "correct_answer": "React Server Components (RSC)",
+    "difficulty": 2
+  },
+  {
+    "question_id": "web_3",
+    "competency_id": 9,
+    "question_text": "How does CORS (Cross-Origin Resource Sharing) protect web applications when a browser makes a cross-origin request with custom headers?",
+    "options": [
+      "The browser sends an HTTP OPTIONS preflight request to verify if the server permits the origin, method, and headers.",
+      "The browser encrypts the request using the domain's public RSA key.",
+      "The browser forces the user to solve a CAPTCHA before allowing cross-origin calls.",
+      "The server terminates TCP connections originating from unlisted IP addresses."
+    ],
+    "correct_answer": "The browser sends an HTTP OPTIONS preflight request to verify if the server permits the origin, method, and headers.",
+    "difficulty": 3
+  },
+  {
+    "question_id": "web_4",
+    "competency_id": 9,
+    "question_text": "When building an interactive dashboard with React and Recharts, why is ResponsiveContainer often wrapped in a client-only dynamic import or mounted state check?",
+    "options": [
+      "To prevent hydration mismatch errors caused by measuring DOM element dimensions before server-rendered HTML reaches the client.",
+      "To enable WebGL GPU hardware acceleration in modern browsers.",
+      "To compress SVG paths before sending them over WebSockets.",
+      "Because Recharts requires Node.js native C++ modules."
+    ],
+    "correct_answer": "To prevent hydration mismatch errors caused by measuring DOM element dimensions before server-rendered HTML reaches the client.",
+    "difficulty": 4
+  },
+  {
+    "question_id": "web_5",
+    "competency_id": 9,
+    "question_text": "In high-throughput Next.js applications, how does Incremental Static Regeneration (ISR) with on-demand tag revalidation (revalidateTag) balance performance and data freshness?",
+    "options": [
+      "Serves cached static HTML from CDN edge nodes instantly while purging and rebuilding stale route caches in the background only when specific mutation webhooks fire.",
+      "Re-executes the entire database query for every incoming request inside edge lambdas.",
+      "Compiles TypeScript files on the client browser using WebAssembly.",
+      "Stores all user sessions in browser IndexedDB."
+    ],
+    "correct_answer": "Serves cached static HTML from CDN edge nodes instantly while purging and rebuilding stale route caches in the background only when specific mutation webhooks fire.",
+    "difficulty": 5
+  },
+  {
+    "question_id": "sec_1",
+    "competency_id": 10,
+    "question_text": "What type of attack occurs when an attacker injects malicious SQL fragments into input fields to bypass authentication or extract database contents?",
+    "options": [
+      "Cross-Site Scripting (XSS)",
+      "SQL Injection (SQLi)",
+      "Cross-Site Request Forgery (CSRF)",
+      "Man-in-the-Middle (MITM)"
+    ],
+    "correct_answer": "SQL Injection (SQLi)",
+    "difficulty": 1
+  },
+  {
+    "question_id": "sec_2",
+    "competency_id": 10,
+    "question_text": "Which algorithm is a secure, salted password hashing function that includes a configurable work factor (cost) to defend against GPU-accelerated brute force attacks?",
+    "options": [
+      "MD5",
+      "SHA-1",
+      "bcrypt",
+      "CRC32"
+    ],
+    "correct_answer": "bcrypt",
+    "difficulty": 2
+  },
+  {
+    "question_id": "sec_3",
+    "competency_id": 10,
+    "question_text": "How does the SameSite cookie attribute (Strict or Lax) provide defense against Cross-Site Request Forgery (CSRF)?",
+    "options": [
+      "It prevents the browser from sending session cookies with cross-site requests initiated by third-party origins.",
+      "It encrypts cookie values with the server's private key.",
+      "It deletes cookies whenever the user navigates away from the page.",
+      "It restricts cookie access exclusively to HTTPS connections."
+    ],
+    "correct_answer": "It prevents the browser from sending session cookies with cross-site requests initiated by third-party origins.",
+    "difficulty": 3
+  },
+  {
+    "question_id": "sec_4",
+    "competency_id": 10,
+    "question_text": "In public key cryptography, what mathematical property enables Elliptic Curve Diffie-Hellman (ECDH) to provide Forward Secrecy in TLS 1.3?",
+    "options": [
+      "Ephemeral key pairs generated per session ensure that compromising the server's long-term private key does not decrypt past session traffic.",
+      "The discrete logarithm problem is solved in polynomial time by quantum circuits.",
+      "Digital certificates are verified without root certificate authorities.",
+      "Symmetric AES-256 keys are broadcast over unencrypted DNS records."
+    ],
+    "correct_answer": "Ephemeral key pairs generated per session ensure that compromising the server's long-term private key does not decrypt past session traffic.",
+    "difficulty": 4
+  },
+  {
+    "question_id": "sec_5",
+    "competency_id": 10,
+    "question_text": "What zero-trust security architectural control enforces continuous authorization and cryptographic isolation for microservice-to-microservice traffic?",
+    "options": [
+      "Mutual TLS (mTLS) with short-lived X.509 certificates and SPIFFE IDs evaluated alongside fine-grained Open Policy Agent (OPA) policies.",
+      "A single perimeter firewall at the network edge with IP whitelisting.",
+      "Basic HTTP authentication over internal VLAN networks.",
+      "Disabling Linux kernel security modules (SELinux / AppArmor)."
+    ],
+    "correct_answer": "Mutual TLS (mTLS) with short-lived X.509 certificates and SPIFFE IDs evaluated alongside fine-grained Open Policy Agent (OPA) policies.",
+    "difficulty": 5
+  }
+]
