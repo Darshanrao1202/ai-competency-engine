@@ -4,6 +4,15 @@ A full-stack, AI-driven academic learning engine designed for Master of Computer
 
 ---
 
+## 🌐 Live Production Deployments
+
+- 🚀 **Live Frontend Dashboard (Vercel)**: [https://frontend-nine-ebon-6a0yn3q5z4.vercel.app](https://frontend-nine-ebon-6a0yn3q5z4.vercel.app)
+- ⚡ **Live Backend REST API (Render)**: [https://competency-gap-api.onrender.com](https://competency-gap-api.onrender.com)
+- 📖 **Interactive Swagger API Docs**: [https://competency-gap-api.onrender.com/docs](https://competency-gap-api.onrender.com/docs)
+- 🐘 **Database**: Neon Serverless PostgreSQL (Singapore Region, SSL-enforced)
+
+---
+
 ## 🏛️ System Architecture
 
 ```mermaid
