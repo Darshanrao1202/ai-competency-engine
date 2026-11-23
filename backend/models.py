@@ -32,6 +32,7 @@ class Student(Base):
     competencies = relationship("StudentCompetency", back_populates="student")
     assessments = relationship("Assessment", back_populates="student")
     personalized_paths = relationship("PersonalizedPath", back_populates="student")
+    user = relationship("User", back_populates="student", uselist=False)
 
 
 class Competency(Base):
@@ -111,3 +112,17 @@ class PersonalizedPath(Base):
 
     student = relationship("Student", back_populates="personalized_paths")
     resource = relationship("LearningResource", back_populates="personalized_paths")
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    user_id = Column(Integer, primary_key=True, autoincrement=True)
+    full_name = Column(String(200), nullable=False)
+    email = Column(String(200), unique=True, index=True, nullable=False)
+    password_hash = Column(String(255), nullable=False)
+    role = Column(String(50), nullable=False)  # 'student', 'faculty', 'admin'
+    student_id = Column(Integer, ForeignKey("students.student_id"), nullable=True)
+    created_at = Column(DateTime, default=_utcnow)
+
+    student = relationship("Student", back_populates="user")

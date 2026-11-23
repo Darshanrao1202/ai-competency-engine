@@ -1,5 +1,6 @@
 import './globals.css';
 import type { Metadata } from 'next';
+import { AuthProvider } from '../context/AuthContext';
 import { StudentProvider } from '../context/StudentContext';
 import Navbar from '../components/Navbar';
 
@@ -17,10 +18,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen bg-slate-50 text-slate-900 antialiased">
-        <StudentProvider>
-          <Navbar />
-          <main className="pb-16">{children}</main>
-        </StudentProvider>
+        <AuthProvider>
+          <StudentProvider>
+            <Navbar />
+            <main className="pb-16">{children}</main>
+          </StudentProvider>
+        </AuthProvider>
       </body>
     </html>
   );

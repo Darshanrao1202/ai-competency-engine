@@ -11,6 +11,7 @@ CREATE SEQUENCE student_competencies_seq START WITH 1 INCREMENT BY 1 NOCACHE NOC
 CREATE SEQUENCE assessments_seq START WITH 1 INCREMENT BY 1 NOCACHE NOCYCLE;
 CREATE SEQUENCE learning_resources_seq START WITH 1 INCREMENT BY 1 NOCACHE NOCYCLE;
 CREATE SEQUENCE personalized_paths_seq START WITH 1 INCREMENT BY 1 NOCACHE NOCYCLE;
+CREATE SEQUENCE users_seq START WITH 1 INCREMENT BY 1 NOCACHE NOCYCLE;
 
 -- ===================== TABLES =====================
 
@@ -85,6 +86,19 @@ CREATE TABLE personalized_paths (
     CONSTRAINT chk_path_status CHECK (status IN ('Pending','In Progress','Completed'))
 );
 
+-- 7. Users (JWT Role-Based Authentication)
+CREATE TABLE users (
+    user_id         NUMBER          PRIMARY KEY,
+    full_name       VARCHAR2(200)   NOT NULL,
+    email           VARCHAR2(200)   NOT NULL UNIQUE,
+    password_hash   VARCHAR2(255)   NOT NULL,
+    role            VARCHAR2(50)    NOT NULL,
+    student_id      NUMBER,
+    created_at      TIMESTAMP       DEFAULT SYSTIMESTAMP,
+    CONSTRAINT fk_users_student FOREIGN KEY (student_id) REFERENCES students(student_id),
+    CONSTRAINT chk_user_role    CHECK (role IN ('student', 'faculty', 'admin'))
+);
+
 -- ===================== AUTO-PK TRIGGERS =====================
 
 CREATE OR REPLACE TRIGGER trg_students_pk
@@ -143,6 +157,16 @@ FOR EACH ROW
 BEGIN
     IF :NEW.path_id IS NULL THEN
         :NEW.path_id := personalized_paths_seq.NEXTVAL;
+    END IF;
+END;
+/
+
+CREATE OR REPLACE TRIGGER trg_users_pk
+BEFORE INSERT ON users
+FOR EACH ROW
+BEGIN
+    IF :NEW.user_id IS NULL THEN
+        :NEW.user_id := users_seq.NEXTVAL;
     END IF;
 END;
 /

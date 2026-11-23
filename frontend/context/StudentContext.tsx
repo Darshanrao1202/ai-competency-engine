@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { fetchStudents } from '../lib/api';
+import { useAuth } from './AuthContext';
 import type { Student } from '../lib/types';
 
 interface StudentContextType {
@@ -23,7 +24,8 @@ const StudentContext = createContext<StudentContextType>({
 });
 
 export function StudentProvider({ children }: { children: React.ReactNode }) {
-  const [studentId, setStudentId] = useState<number>(1);
+  const { user } = useAuth();
+  const [studentId, setStudentId] = useState<number>(user?.student_id || 1);
   const [students, setStudents] = useState<Student[]>([]);
   const [loadingStudents, setLoadingStudents] = useState<boolean>(true);
   const [refreshTrigger, setRefreshTrigger] = useState<number>(0);
@@ -32,7 +34,21 @@ export function StudentProvider({ children }: { children: React.ReactNode }) {
     setRefreshTrigger((prev) => prev + 1);
   };
 
+  // Sync studentId with user when logged in as a student
   useEffect(() => {
+    if (user && user.role === 'student' && user.student_id) {
+      setStudentId(user.student_id);
+    }
+  }, [user]);
+
+  // Load students list only if authenticated
+  useEffect(() => {
+    if (!user) {
+      setStudents([]);
+      setLoadingStudents(false);
+      return;
+    }
+
     let mounted = true;
     async function load() {
       try {
@@ -40,8 +56,7 @@ export function StudentProvider({ children }: { children: React.ReactNode }) {
         const data = await fetchStudents();
         if (mounted && data.length > 0) {
           setStudents(data);
-          // Keep current studentId if valid, else default to first student
-          if (!data.some((s) => s.student_id === studentId)) {
+          if (user?.role !== 'student' && !data.some((s) => s.student_id === studentId)) {
             setStudentId(data[0].student_id);
           }
         }
@@ -55,7 +70,7 @@ export function StudentProvider({ children }: { children: React.ReactNode }) {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [user]);
 
   return (
     <StudentContext.Provider

@@ -222,4 +222,35 @@ VALUES (4, 4, 13, 'In Progress', 'Critical path item to elevate Deep Learning pr
 INSERT INTO personalized_paths (path_id, student_id, resource_id, status, ai_reason, assigned_date, completion_date)
 VALUES (5, 4, 1, 'Completed', 'Completed core Python data structures for scientific computing.', SYSTIMESTAMP - 15, SYSTIMESTAMP - 5);
 
+-- 7. Insert RBAC Users (Default password: Student@123 for students, Admin@123 for admin, Faculty@123 for faculty)
+INSERT INTO users (user_id, full_name, email, password_hash, role, student_id, created_at)
+VALUES (1, 'Aarav Sharma', 'aarav.sharma@university.edu', '$2b$12$e8Y5t1R92XyR0G4c8vJm3eGZ3O4tO8X4H0I2J4K6L8M0N2P4Q6R8S', 'student', 1, SYSTIMESTAMP - 10);
+
+INSERT INTO users (user_id, full_name, email, password_hash, role, student_id, created_at)
+VALUES (2, 'Priya Patel', 'priya.patel@university.edu', '$2b$12$e8Y5t1R92XyR0G4c8vJm3eGZ3O4tO8X4H0I2J4K6L8M0N2P4Q6R8S', 'student', 2, SYSTIMESTAMP - 10);
+
+INSERT INTO users (user_id, full_name, email, password_hash, role, student_id, created_at)
+VALUES (3, 'Rohan Gupta', 'rohan.gupta@university.edu', '$2b$12$e8Y5t1R92XyR0G4c8vJm3eGZ3O4tO8X4H0I2J4K6L8M0N2P4Q6R8S', 'student', 3, SYSTIMESTAMP - 10);
+
+INSERT INTO users (user_id, full_name, email, password_hash, role, student_id, created_at)
+VALUES (4, 'Sneha Reddy', 'sneha.reddy@university.edu', '$2b$12$e8Y5t1R92XyR0G4c8vJm3eGZ3O4tO8X4H0I2J4K6L8M0N2P4Q6R8S', 'student', 4, SYSTIMESTAMP - 10);
+
+INSERT INTO users (user_id, full_name, email, password_hash, role, student_id, created_at)
+VALUES (5, 'Vikram Singh', 'vikram.singh@university.edu', '$2b$12$e8Y5t1R92XyR0G4c8vJm3eGZ3O4tO8X4H0I2J4K6L8M0N2P4Q6R8S', 'student', 5, SYSTIMESTAMP - 10);
+
+INSERT INTO users (user_id, full_name, email, password_hash, role, student_id, created_at)
+VALUES (6, 'Ananya Nair', 'ananya.nair@university.edu', '$2b$12$e8Y5t1R92XyR0G4c8vJm3eGZ3O4tO8X4H0I2J4K6L8M0N2P4Q6R8S', 'student', 6, SYSTIMESTAMP - 10);
+
+INSERT INTO users (user_id, full_name, email, password_hash, role, student_id, created_at)
+VALUES (7, 'Karthik Iyer', 'karthik.iyer@university.edu', '$2b$12$e8Y5t1R92XyR0G4c8vJm3eGZ3O4tO8X4H0I2J4K6L8M0N2P4Q6R8S', 'student', 7, SYSTIMESTAMP - 10);
+
+INSERT INTO users (user_id, full_name, email, password_hash, role, student_id, created_at)
+VALUES (8, 'Meera Joshi', 'meera.joshi@university.edu', '$2b$12$e8Y5t1R92XyR0G4c8vJm3eGZ3O4tO8X4H0I2J4K6L8M0N2P4Q6R8S', 'student', 8, SYSTIMESTAMP - 10);
+
+INSERT INTO users (user_id, full_name, email, password_hash, role, student_id, created_at)
+VALUES (9, 'System Administrator', 'admin@rvitm.edu.in', '$2b$12$e8Y5t1R92XyR0G4c8vJm3eGZ3O4tO8X4H0I2J4K6L8M0N2P4Q6R8S', 'admin', NULL, SYSTIMESTAMP - 30);
+
+INSERT INTO users (user_id, full_name, email, password_hash, role, student_id, created_at)
+VALUES (10, 'Prof. Curriculum Director', 'faculty@rvitm.edu.in', '$2b$12$e8Y5t1R92XyR0G4c8vJm3eGZ3O4tO8X4H0I2J4K6L8M0N2P4Q6R8S', 'faculty', NULL, SYSTIMESTAMP - 30);
+
 COMMIT;

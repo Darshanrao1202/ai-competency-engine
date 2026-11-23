@@ -14,6 +14,14 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from auth import (
+    create_access_token,
+    get_current_user,
+    hash_password,
+    require_faculty_or_admin,
+    require_student,
+    verify_password,
+)
 from database import Base, engine, get_db
 from models import (
     Assessment,
@@ -22,6 +30,7 @@ from models import (
     PersonalizedPath,
     Student,
     StudentCompetency,
+    User,
 )
 from seed import seed_database
 
@@ -51,8 +60,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(
     title="AI Competency Gap & Personalized Learning Engine API",
-    description="REST API and Machine Learning Recommendation Engine for Academic Competency Evaluation",
-    version="1.0.0",
+    description="REST API and Machine Learning Recommendation Engine with JWT RBAC Protection",
+    version="2.0.0",
     lifespan=lifespan,
 )
 
@@ -74,6 +83,36 @@ app.add_middleware(
 # ==========================================
 # PYDANTIC SCHEMAS
 # ==========================================
+
+
+class UserRegister(BaseModel):
+    full_name: str = Field(..., min_length=2, max_length=200)
+    email: str = Field(..., min_length=5, max_length=200)
+    password: str = Field(..., min_length=6, max_length=100)
+    semester: int = Field(default=1, ge=1, le=8)
+    specialization: Optional[str] = "AI/ML"
+
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+
+class UserOut(BaseModel):
+    user_id: int
+    full_name: str
+    email: str
+    role: str
+    student_id: Optional[int] = None
+
+    class Config:
+        from_attributes = True
+
+
+class AuthResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: UserOut
 
 
 class StudentResponse(BaseModel):
@@ -197,18 +236,140 @@ class PathStatusUpdate(BaseModel):
 
 
 # ==========================================
-# API ENDPOINTS
+# AUTHENTICATION ENDPOINTS
+# ==========================================
+
+
+@app.post("/api/auth/register", response_model=AuthResponse, status_code=201, tags=["Authentication"])
+def register_student(payload: UserRegister, db: Session = Depends(get_db)):
+    """
+    Registers a new student, automatically creating both a Student profile
+    (with baseline student_competencies initialized to level 1 for all competencies)
+    and an authenticated User record with role='student'. Returns a signed JWT token.
+    """
+    clean_email = payload.email.strip().lower()
+
+    # Check if user already exists
+    existing_user = db.query(User).filter(User.email == clean_email).first()
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="An account with this email address already exists.",
+        )
+
+    # Check if student with this email already exists
+    existing_student = db.query(Student).filter(Student.email == clean_email).first()
+    if existing_student:
+        student = existing_student
+    else:
+        # Create student profile
+        student = Student(
+            full_name=payload.full_name.strip(),
+            email=clean_email,
+            semester=payload.semester,
+            specialization=payload.specialization or "AI/ML",
+            created_at=_utcnow(),
+        )
+        db.add(student)
+        db.flush()
+
+        # Initialize student_competencies across all existing competencies
+        all_comps = db.query(Competency).all()
+        for c in all_comps:
+            sc = StudentCompetency(
+                student_id=student.student_id,
+                competency_id=c.competency_id,
+                current_level=1,
+                target_level=5,
+                last_assessed=None,
+            )
+            db.add(sc)
+        db.flush()
+
+    # Create User account
+    pwd_hash = hash_password(payload.password)
+    new_user = User(
+        full_name=payload.full_name.strip(),
+        email=clean_email,
+        password_hash=pwd_hash,
+        role="student",
+        student_id=student.student_id,
+        created_at=_utcnow(),
+    )
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+
+    # Issue 24-hour access token
+    token = create_access_token(
+        {
+            "sub": str(new_user.user_id),
+            "email": new_user.email,
+            "role": new_user.role,
+            "student_id": new_user.student_id,
+        }
+    )
+
+    return AuthResponse(
+        access_token=token,
+        token_type="bearer",
+        user=UserOut.model_validate(new_user),
+    )
+
+
+@app.post("/api/auth/login", response_model=AuthResponse, tags=["Authentication"])
+def login_user(payload: UserLogin, db: Session = Depends(get_db)):
+    """
+    Verifies email and password credentials, returning an access_token and user profile.
+    Supports students, faculty, and administrators.
+    """
+    clean_email = payload.email.strip().lower()
+    user = db.query(User).filter(User.email == clean_email).first()
+
+    if not user or not verify_password(payload.password, user.password_hash):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password. Please verify your credentials.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+
+    token = create_access_token(
+        {
+            "sub": str(user.user_id),
+            "email": user.email,
+            "role": user.role,
+            "student_id": user.student_id,
+        }
+    )
+
+    return AuthResponse(
+        access_token=token,
+        token_type="bearer",
+        user=UserOut.model_validate(user),
+    )
+
+
+@app.get("/api/auth/me", response_model=UserOut, tags=["Authentication"])
+def get_current_user_profile(current_user: User = Depends(get_current_user)):
+    """Returns the authenticated user profile based on Bearer token."""
+    return UserOut.model_validate(current_user)
+
+
+# ==========================================
+# SYSTEM & CORE API ENDPOINTS
 # ==========================================
 
 
 @app.get("/health", tags=["System"])
 def health_check(db: Session = Depends(get_db)):
-    """Verifies backend runtime and database connectivity."""
+    """Verifies backend runtime, database connectivity, and auth state."""
     try:
         db.execute(text("SELECT 1"))
+        user_count = db.query(User).count()
         return {
             "status": "ok",
             "database": "connected",
+            "users_count": user_count,
             "timestamp": _utcnow().isoformat(),
         }
     except Exception as e:
@@ -219,24 +380,35 @@ def health_check(db: Session = Depends(get_db)):
 
 
 @app.get("/api/students", response_model=List[StudentResponse], tags=["Students"])
-def get_students(db: Session = Depends(get_db)):
-    """Returns all registered MCA students."""
+def get_students(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """Returns registered MCA students. Accessible by authenticated users."""
     students = db.query(Student).order_by(Student.student_id).all()
     return students
 
 
 @app.get("/api/students/{student_id}/dashboard", response_model=DashboardResponse, tags=["Dashboard"])
-def get_student_dashboard(student_id: int, db: Session = Depends(get_db)):
+def get_student_dashboard(
+    student_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     """
-    Returns complete dashboard details for a given student:
-    profile, competency breakdown with gaps, recent assessments,
-    personalized learning path, and high-level KPI summaries.
+    Returns complete dashboard details for a given student.
+    Enforces RBAC: Students can only access their own dashboard; Faculty/Admin can view any.
     """
+    if current_user.role == "student" and current_user.student_id != student_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access forbidden: You may only view your own student dashboard.",
+        )
+
     student = db.query(Student).filter(Student.student_id == student_id).first()
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
 
-    # Fetch student competency records
     sc_records = (
         db.query(StudentCompetency, Competency)
         .join(Competency, StudentCompetency.competency_id == Competency.competency_id)
@@ -269,7 +441,6 @@ def get_student_dashboard(student_id: int, db: Session = Depends(get_db)):
             )
         )
 
-    # Fetch recent assessments
     assessments_query = (
         db.query(Assessment, Competency.competency_name)
         .join(Competency, Assessment.competency_id == Competency.competency_id)
@@ -294,13 +465,11 @@ def get_student_dashboard(student_id: int, db: Session = Depends(get_db)):
             )
         )
 
-    # Fetch personalized learning paths
     paths_query = (
         db.query(PersonalizedPath, LearningResource)
         .join(LearningResource, PersonalizedPath.resource_id == LearningResource.resource_id)
         .filter(PersonalizedPath.student_id == student_id)
         .order_by(
-            # Sort order: In Progress -> Pending -> Completed
             PersonalizedPath.status.desc(),
             PersonalizedPath.assigned_date.desc(),
         )
@@ -355,10 +524,14 @@ def get_competencies(db: Session = Depends(get_db)):
 
 
 @app.post("/api/competencies", response_model=CompetencyResponse, status_code=201, tags=["Competencies"])
-def create_competency(comp_in: CompetencyCreate, db: Session = Depends(get_db)):
+def create_competency(
+    comp_in: CompetencyCreate,
+    current_user: User = Depends(require_faculty_or_admin),
+    db: Session = Depends(get_db),
+):
     """
-    Creates a new competency and automatically initializes
-    student_competency records (level 1 to target 5) for all enrolled students.
+    Creates a new competency and auto-initializes student_competency records.
+    Restricted to Faculty and Admin roles (403 for students).
     """
     new_comp = Competency(
         competency_name=comp_in.competency_name,
@@ -368,7 +541,6 @@ def create_competency(comp_in: CompetencyCreate, db: Session = Depends(get_db)):
     db.add(new_comp)
     db.flush()
 
-    # Auto-initialize student competency records for all existing students
     students = db.query(Student).all()
     for s in students:
         sc = StudentCompetency(
@@ -386,10 +558,14 @@ def create_competency(comp_in: CompetencyCreate, db: Session = Depends(get_db)):
 
 
 @app.get("/api/quizzes/{competency_id}", response_model=QuizResponse, tags=["Assessments"])
-def get_diagnostic_quiz(competency_id: int, db: Session = Depends(get_db)):
+def get_diagnostic_quiz(
+    competency_id: int,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     """
     Fetches diagnostic quiz questions for the specified competency.
-    Crucially, correct answer keys are stripped from the response payload.
+    Correct answer keys are stripped from the response payload.
     """
     comp = db.query(Competency).filter(Competency.competency_id == competency_id).first()
     if not comp:
@@ -399,7 +575,6 @@ def get_diagnostic_quiz(competency_id: int, db: Session = Depends(get_db)):
     matching_questions = [q for q in bank if q.get("competency_id") == competency_id]
 
     if not matching_questions:
-        # Fallback question if bank is empty or extended competency
         matching_questions = [
             {
                 "question_id": f"gen_{competency_id}_1",
@@ -414,7 +589,6 @@ def get_diagnostic_quiz(competency_id: int, db: Session = Depends(get_db)):
             }
         ]
 
-    # Strip correct_answer from each question
     sanitized_questions = [
         QuizQuestionOut(
             question_id=q["question_id"],
@@ -436,13 +610,24 @@ def get_diagnostic_quiz(competency_id: int, db: Session = Depends(get_db)):
 
 
 @app.post("/api/assessments/submit", tags=["Assessments"])
-def submit_assessment(payload: AssessmentSubmitRequest, db: Session = Depends(get_db)):
+def submit_assessment(
+    payload: AssessmentSubmitRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     """
     Grades diagnostic quiz submissions with difficulty-weighted scoring,
     computes response consistency metrics (AI confidence score),
     updates current_level and competency gap, and executes the
     Scikit-Learn TF-IDF + Adaptive Difficulty recommendation engine.
+    Restricted: Students can only submit assessments for their own profile.
     """
+    if current_user.role == "student" and current_user.student_id != payload.student_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access forbidden: You may only submit assessments for your own student profile.",
+        )
+
     student = db.query(Student).filter(Student.student_id == payload.student_id).first()
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
@@ -454,7 +639,6 @@ def submit_assessment(payload: AssessmentSubmitRequest, db: Session = Depends(ge
     quiz_bank = load_quiz_bank()
     q_map = {q["question_id"]: q for q in quiz_bank}
 
-    # Difficulty-weighted grading
     earned_weight = 0.0
     total_weight = 0.0
     easy_correct, easy_total = 0, 0
@@ -485,15 +669,12 @@ def submit_assessment(payload: AssessmentSubmitRequest, db: Session = Depends(ge
     else:
         score_percentage = 50.0
 
-    # Calculate AI confidence score (evaluating consistency between easy and hard questions)
     easy_acc = (easy_correct / easy_total) if easy_total > 0 else 1.0
     hard_acc = (hard_correct / hard_total) if hard_total > 0 else 0.5
-    # If student scores much higher on hard questions than easy ones, confidence is lower (lucky guessing)
     inconsistency = max(0.0, hard_acc - easy_acc)
     ai_confidence = float(np.clip(1.0 - (inconsistency * 0.4), 0.68, 0.98))
     ai_confidence = round(ai_confidence, 3)
 
-    # Determine updated proficiency level (1 to 5)
     if score_percentage < 25.0:
         new_level = 1
     elif score_percentage < 45.0:
@@ -505,7 +686,6 @@ def submit_assessment(payload: AssessmentSubmitRequest, db: Session = Depends(ge
     else:
         new_level = 5
 
-    # Update or insert StudentCompetency record
     sc = (
         db.query(StudentCompetency)
         .filter(
@@ -528,7 +708,6 @@ def submit_assessment(payload: AssessmentSubmitRequest, db: Session = Depends(ge
         sc.current_level = new_level
         sc.last_assessed = _utcnow()
 
-    # Record historical assessment
     assessment_record = Assessment(
         student_id=payload.student_id,
         competency_id=payload.competency_id,
@@ -541,9 +720,7 @@ def submit_assessment(payload: AssessmentSubmitRequest, db: Session = Depends(ge
 
     gap = max(0, (sc.target_level or 5) - new_level)
 
-    # ========================================================
-    # AI RECOMMENDATION ENGINE (TF-IDF + Adaptive Difficulty)
-    # ========================================================
+    # Scikit-Learn TF-IDF + Adaptive Difficulty
     all_competencies = db.query(Competency).all()
     comp_descriptions = [c.description or c.competency_name for c in all_competencies]
     comp_id_to_idx = {c.competency_id: idx for idx, c in enumerate(all_competencies)}
@@ -555,7 +732,6 @@ def submit_assessment(payload: AssessmentSubmitRequest, db: Session = Depends(ge
 
     target_diff = min(5, new_level + 1)
 
-    # Existing paths for this student (avoid duplicates)
     existing_resource_ids = {
         p.resource_id
         for p in db.query(PersonalizedPath.resource_id)
@@ -563,7 +739,6 @@ def submit_assessment(payload: AssessmentSubmitRequest, db: Session = Depends(ge
         .all()
     }
 
-    # Fetch candidate learning resources
     all_resources = db.query(LearningResource).all()
     scored_candidates = []
 
@@ -579,15 +754,12 @@ def submit_assessment(payload: AssessmentSubmitRequest, db: Session = Depends(ge
         else:
             content_sim = 0.1
 
-        # Difficulty match penalty (closer to target_diff = higher score)
         diff_gap = abs(res.difficulty_level - target_diff)
         diff_score = max(0.0, 1.0 - (diff_gap * 0.25))
 
-        # Overall recommendation score
         total_rec_score = (content_sim * 0.65) + (diff_score * 0.35)
         scored_candidates.append((total_rec_score, res))
 
-    # Rank and select top 2-3 recommendations
     scored_candidates.sort(key=lambda x: x[0], reverse=True)
     top_candidates = scored_candidates[:3]
 
@@ -642,13 +814,27 @@ def submit_assessment(payload: AssessmentSubmitRequest, db: Session = Depends(ge
 
 
 @app.patch("/api/paths/{path_id}", tags=["Learning Paths"])
-def update_path_status(path_id: int, payload: PathStatusUpdate, db: Session = Depends(get_db)):
-    """Updates learning path status (Pending -> In Progress -> Completed)."""
+def update_path_status(
+    path_id: int,
+    payload: PathStatusUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    """
+    Updates learning path status (Pending -> In Progress -> Completed).
+    Enforces that students can only update their own learning path items.
+    """
     path_record = (
         db.query(PersonalizedPath).filter(PersonalizedPath.path_id == path_id).first()
     )
     if not path_record:
         raise HTTPException(status_code=404, detail="Learning path entry not found")
+
+    if current_user.role == "student" and path_record.student_id != current_user.student_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Access forbidden: You may only update learning paths assigned to you.",
+        )
 
     path_record.status = payload.status
     if payload.status == "Completed":
@@ -671,8 +857,12 @@ def update_path_status(path_id: int, payload: PathStatusUpdate, db: Session = De
 
 
 @app.post("/api/resources", response_model=ResourceResponse, status_code=201, tags=["Resources"])
-def create_resource(res_in: ResourceCreate, db: Session = Depends(get_db)):
-    """Creates a new learning resource."""
+def create_resource(
+    res_in: ResourceCreate,
+    current_user: User = Depends(require_faculty_or_admin),
+    db: Session = Depends(get_db),
+):
+    """Creates a new learning resource. Restricted to Faculty and Admin roles."""
     comp = db.query(Competency).filter(Competency.competency_id == res_in.competency_id).first()
     if not comp:
         raise HTTPException(status_code=404, detail="Competency not found")
@@ -691,17 +881,17 @@ def create_resource(res_in: ResourceCreate, db: Session = Depends(get_db)):
 
 
 @app.get("/api/analytics/cohort", tags=["Analytics"])
-def get_cohort_analytics(db: Session = Depends(get_db)):
+def get_cohort_analytics(
+    current_user: User = Depends(require_faculty_or_admin),
+    db: Session = Depends(get_db),
+):
     """
-    Computes cohort-wide academic analytics:
-    - Average proficiency vs. target per competency
-    - Skill gap distribution across all students
-    - At-risk student identification (students with gap >= 2 in 2 or more competencies)
+    Computes cohort-wide academic analytics.
+    Strictly restricted to Faculty and Administrator roles (403 Forbidden for students).
     """
     competencies = db.query(Competency).order_by(Competency.competency_id).all()
     all_sc = db.query(StudentCompetency).all()
 
-    # Aggregate averages per competency
     comp_averages = []
     for c in competencies:
         records = [sc for sc in all_sc if sc.competency_id == c.competency_id]
@@ -723,7 +913,6 @@ def get_cohort_analytics(db: Session = Depends(get_db)):
             }
         )
 
-    # Gap distribution
     distribution = {"no_gap": 0, "low_gap": 0, "medium_gap": 0, "high_gap": 0}
     for sc in all_sc:
         g = max(0, sc.target_level - sc.current_level)
@@ -736,7 +925,6 @@ def get_cohort_analytics(db: Session = Depends(get_db)):
         else:
             distribution["high_gap"] += 1
 
-    # At-risk students identification (gap >= 2 in 2 or more competencies)
     students = db.query(Student).order_by(Student.student_id).all()
     at_risk_list = []
     comp_name_map = {c.competency_id: c.competency_name for c in competencies}

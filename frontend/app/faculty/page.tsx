@@ -1,15 +1,20 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../../context/AuthContext';
 import { fetchCohortAnalytics, fetchCompetencies } from '../../lib/api';
 import type { CohortAnalytics as CohortAnalyticsType, CompetencyFull } from '../../lib/types';
 import CohortAnalytics from '../../components/CohortAnalytics';
 import AtRiskTable from '../../components/AtRiskTable';
 import AddCompetencyModal from '../../components/AddCompetencyModal';
 import AddResourceModal from '../../components/AddResourceModal';
-import { Users, PlusCircle, BookPlus, AlertCircle, RefreshCw } from 'lucide-react';
+import { Users, PlusCircle, BookPlus, AlertCircle, RefreshCw, ShieldCheck } from 'lucide-react';
 
 export default function FacultyPage() {
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
+
   const [analytics, setAnalytics] = useState<CohortAnalyticsType | null>(null);
   const [competencies, setCompetencies] = useState<CompetencyFull[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -18,7 +23,20 @@ export default function FacultyPage() {
   const [isCompModalOpen, setIsCompModalOpen] = useState(false);
   const [isResModalOpen, setIsResModalOpen] = useState(false);
 
+  // RBAC route guard: block unauthenticated users and students
+  useEffect(() => {
+    if (!authLoading) {
+      if (!user) {
+        router.push('/login');
+      } else if (user.role === 'student') {
+        // Strict RBAC: students are blocked from faculty/admin portal
+        router.push('/student');
+      }
+    }
+  }, [user, authLoading, router]);
+
   const loadData = async () => {
+    if (!user || user.role === 'student') return;
     try {
       setLoading(true);
       setError(null);
@@ -36,8 +54,21 @@ export default function FacultyPage() {
   };
 
   useEffect(() => {
-    loadData();
-  }, []);
+    if (user && user.role !== 'student') {
+      loadData();
+    }
+  }, [user]);
+
+  if (authLoading || (loading && !analytics)) {
+    return (
+      <div className="py-20 flex flex-col items-center justify-center space-y-4">
+        <div className="w-10 h-10 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin" />
+        <p className="text-sm font-semibold text-slate-600">
+          Authenticating privileges and computing cohort analytics...
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -48,9 +79,14 @@ export default function FacultyPage() {
             <Users className="w-7 h-7" />
           </div>
           <div>
-            <h2 className="text-xl font-extrabold text-slate-900">
-              Faculty & Curriculum Administration Portal
-            </h2>
+            <div className="flex items-center space-x-2">
+              <h2 className="text-xl font-extrabold text-slate-900">
+                Faculty & Curriculum Administration Portal
+              </h2>
+              <span className="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 uppercase">
+                {user?.role} Privileges
+              </span>
+            </div>
             <p className="text-xs text-slate-500 mt-1">
               Cohort-wide academic diagnostics, targeted interventions, and curriculum catalog management.
             </p>
@@ -91,14 +127,7 @@ export default function FacultyPage() {
         </div>
       )}
 
-      {loading && !analytics ? (
-        <div className="py-16 flex flex-col items-center justify-center space-y-4">
-          <div className="w-10 h-10 rounded-full border-4 border-indigo-600 border-t-transparent animate-spin" />
-          <p className="text-sm font-semibold text-slate-600">
-            Computing cohort-wide analytics and skill gap distributions...
-          </p>
-        </div>
-      ) : analytics ? (
+      {analytics ? (
         <>
           {/* Cohort Proficiency vs Target Charts & Distribution */}
           <CohortAnalytics analytics={analytics} />

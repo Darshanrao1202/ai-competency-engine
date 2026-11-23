@@ -13,6 +13,19 @@ A full-stack, AI-driven academic learning engine designed for Master of Computer
 
 ---
 
+## 🔐 Demo Credentials (JWT Role-Based Access Control)
+
+| Role | Email | Password | Access Scope |
+|---|---|---|---|
+| **Student (Sample)** | `aarav.sharma@university.edu` | `Student@123` | Individual Student Dashboard, Personalized Path, Adaptive Quizzes |
+| **Student (All 8 Seeded)** | `<student.name>@university.edu` | `Student@123` | Dedicated student profile (Priya, Rohan, Sneha, Vikram, etc.) |
+| **Faculty** | `faculty@rvitm.edu.in` | `Faculty@123` | Cohort Analytics, Gap Distributions, At-Risk Roster, Subject Inspector |
+| **Administrator** | `admin@rvitm.edu.in` | `Admin@123` | Full Administrative Privileges, Competency & Resource Management |
+
+*Note: You can also register a new student account directly from the **Student Register** tab on the login screen.*
+
+---
+
 ## 🏛️ System Architecture
 
 ```mermaid

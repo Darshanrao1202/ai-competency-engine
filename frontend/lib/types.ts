@@ -1,3 +1,17 @@
+export interface User {
+  user_id: number;
+  full_name: string;
+  email: string;
+  role: 'student' | 'faculty' | 'admin';
+  student_id: number | null;
+}
+
+export interface AuthResponse {
+  access_token: string;
+  token_type: string;
+  user: User;
+}
+
 export interface Student {
   student_id: number;
   full_name: string;
@@ -26,6 +40,7 @@ export interface Assessment {
 
 export interface PathEntry {
   path_id: number;
+  resource_id: number;
   title: string;
   resource_type: string;
   difficulty_level: number;
@@ -90,7 +105,9 @@ export interface SubmitResult {
 
 export interface CohortAnalytics {
   competency_averages: {
+    competency_id?: number;
     competency_name: string;
+    category?: string;
     avg_current: number;
     avg_target: number;
     avg_gap: number;
@@ -104,6 +121,9 @@ export interface CohortAnalytics {
   at_risk_students: {
     student_id: number;
     full_name: string;
+    email?: string;
+    specialization?: string;
+    semester?: number;
     weak_competencies: string[];
     risk_level: string;
   }[];
