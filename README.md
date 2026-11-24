@@ -146,7 +146,33 @@ When a student completes an assessment:
 
 ---
 
-## 🚀 Local Development Setup
+## 🚀 Quick Run (1-Click Local Execution)
+
+You can launch both the **FastAPI Backend** and **Next.js Frontend** simultaneously using any of the following methods:
+
+### Method A: Single-Click Launcher (Windows Explorer)
+- Simply double-click **`start.bat`** in the project root folder `D:\Projectt`.
+- It will automatically launch the backend in one terminal, launch the frontend in another terminal, and open `http://localhost:3000` in your default web browser.
+
+### Method B: PowerShell Script
+```powershell
+.\start.ps1
+```
+
+### Method C: Monorepo Root npm Scripts
+From the root directory `D:\Projectt`:
+```bash
+# Run both Frontend and Backend together:
+npm run dev
+
+# Or run individually:
+npm run backend    # Starts FastAPI on http://127.0.0.1:8000
+npm run frontend   # Starts Next.js on http://localhost:3000
+```
+
+---
+
+## 🛠️ Manual Step-by-Step Local Setup
 
 ### 1. Backend Setup
 ```bash

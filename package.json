@@ -1,0 +1,11 @@
+{
+  "name": "ai-competency-engine-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix frontend run dev",
+    "frontend": "npm --prefix frontend run dev",
+    "backend": "cd backend && .venv\\Scripts\\python.exe -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload",
+    "build": "npm --prefix frontend run build"
+  }
+}
