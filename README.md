@@ -166,7 +166,7 @@ From the root directory `D:\Projectt`:
 npm run dev
 
 # Or run individually:
-npm run backend    # Starts FastAPI on http://127.0.0.1:8000
+npm run backend    # Starts FastAPI on http://127.0.0.1:8005
 npm run frontend   # Starts Next.js on http://localhost:3000
 ```
 
@@ -193,9 +193,9 @@ pip install -r requirements.txt
 # ALLOWED_ORIGINS=*
 
 # Launch FastAPI server (seeds database automatically on startup)
-uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+uvicorn main:app --host 127.0.0.1 --port 8005 --reload
 ```
-API Documentation will be live at `http://127.0.0.1:8000/docs`.
+API Documentation will be live at `http://127.0.0.1:8005/docs`.
 
 ### 2. Frontend Setup
 ```bash

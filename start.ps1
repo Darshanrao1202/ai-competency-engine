@@ -5,8 +5,8 @@ Write-Host "===================================================" -ForegroundColo
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 if (-not $scriptDir) { $scriptDir = (Get-Location).Path }
 
-Write-Host "Launching Backend on http://127.0.0.1:8000..." -ForegroundColor Yellow
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "Set-Location '$scriptDir\backend'; & '$scriptDir\backend\.venv\Scripts\python.exe' -m uvicorn main:app --host 127.0.0.1 --port 8000 --reload"
+Write-Host "Launching Backend on http://127.0.0.1:8005..." -ForegroundColor Yellow
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "Set-Location '$scriptDir\backend'; & '$scriptDir\backend\.venv\Scripts\python.exe' -m uvicorn main:app --host 127.0.0.1 --port 8005 --reload"
 
 Start-Sleep -Seconds 3
 
